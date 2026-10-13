@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>しょうわ整骨院 口コミかんたん作成</title>
+<style>
+  :root { --main:#2f7d5b; --main-light:#e6f2ec; --text:#222; --sub:#666; --line:#ddd; --bg:#fafaf7; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif; font-size:17px; line-height:1.6; }
+  .wrap { max-width:520px; margin:0 auto; padding:16px 16px 40px; }
+  header { margin-bottom:16px; }
+  .clinic { font-size:14px; color:var(--sub); }
+  .bar { height:6px; background:var(--line); border-radius:3px; margin:8px 0 4px; overflow:hidden; }
+  .bar > div { height:100%; background:var(--main); transition:width .2s; }
+  .count { font-size:13px; color:var(--sub); text-align:right; }
+  .back { background:none; border:none; color:var(--main); font-size:15px; padding:8px 0; cursor:pointer; }
+  h1 { font-size:21px; margin:8px 0 4px; }
+  .hint { font-size:14px; color:var(--sub); margin:0 0 16px; }
+  .opts { display:flex; flex-direction:column; gap:10px; }
+  .opt { min-height:56px; padding:12px 16px; text-align:left; font-size:17px; border:2px solid var(--line); border-radius:12px; background:#fff; color:var(--text); cursor:pointer; }
+  .opt.on { border-color:var(--main); background:var(--main-light); font-weight:bold; }
+  .primary { display:block; width:100%; min-height:56px; margin-top:20px; border:none; border-radius:28px; background:var(--main); color:#fff; font-size:18px; font-weight:bold; text-align:center; text-decoration:none; line-height:56px; cursor:pointer; }
+  .primary[disabled] { opacity:.4; cursor:default; }
+  .secondary { display:block; width:100%; min-height:48px; margin-top:12px; border:2px solid var(--main); border-radius:24px; background:#fff; color:var(--main); font-size:16px; cursor:pointer; }
+  textarea { width:100%; font-size:17px; line-height:1.7; padding:12px; border:2px solid var(--line); border-radius:12px; font-family:inherit; }
+  .remain { font-size:13px; color:var(--sub); text-align:right; }
+  .draft { font-size:15px; font-weight:bold; color:#7a4b00; background:#fff4dc; border:1px solid #f0c36d; border-radius:12px; padding:10px 12px; margin:0 0 12px; }
+  details.anon { margin-top:14px; font-size:14px; color:var(--sub); }
+  details.anon summary { color:var(--main); cursor:pointer; padding:6px 0; }
+  details.anon p { margin:6px 0; }
+  .tips { margin:0 0 8px; padding-left:1.2em; }
+  .tips li { margin:6px 0; }
+  .note { font-size:14px; color:var(--sub); background:#fff; border-radius:12px; padding:12px; margin-top:16px; }
+  .msg { color:#b3261e; font-size:15px; margin-top:12px; }
+  .ok { color:var(--main); font-size:15px; margin-top:12px; }
+  .sub-q { margin-top:24px; }
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+var google = { script: { run: (function () {
+  var ok, ng;
+  var api = {
+    withSuccessHandler: function (f) { ok = f; return api; },
+    withFailureHandler: function (f) { ng = f; return api; },
+    generateReview: function (answers) {
+      fetch('https://script.google.com/macros/s/AKfycbwjmV6H0Q5tpuUdaSjBHFtQWVShTVDqgqbiqWU0sBETGBjq2YjhACcbrNt1Giy6QY9d6g/exec', { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(answers) })
+        .then(function (r) { return r.json(); })
+        .then(function (r) { ok(r); }, function (e) { ng(e); });
+    }
+  };
+  return api;
+})() } };
+</script>
+<script>
+  var OPTIONS = {"symptoms":[{"id":"low_back","label":"腰痛・ぎっくり腰","triggers":[{"id":"lifting","label":"重いものを持ったとき"},{"id":"morning","label":"朝起きたとき"},{"id":"desk","label":"長時間のデスクワーク"},{"id":"housework","label":"家事や育児の最中"},{"id":"none","label":"思い当たらない"}],"motions":[{"id":"bend","label":"前かがみになる"},{"id":"standup","label":"座った状態から立ち上がる"},{"id":"turn_bed","label":"寝返りをうつ"},{"id":"walk","label":"歩く"},{"id":"sit_long","label":"長く座る"}],"abilities":[{"id":"work","label":"仕事に集中できる"},{"id":"sleep","label":"ぐっすり眠れる"},{"id":"housework","label":"家事を楽にこなせる"},{"id":"walk","label":"気にせず歩ける"}]},{"id":"neck_shoulder","label":"肩こり・首の痛み・寝違え","triggers":[{"id":"desk","label":"パソコンやスマホの使いすぎ"},{"id":"sleep","label":"寝ている間（寝違え）"},{"id":"stress","label":"忙しさや疲れがたまって"},{"id":"none","label":"思い当たらない"}],"motions":[{"id":"look_up","label":"上を向く"},{"id":"turn_neck","label":"首を横に回す"},{"id":"raise_arm","label":"腕を上げる"},{"id":"desk","label":"デスクワークを続ける"},{"id":"sleep","label":"寝ているとき"}],"abilities":[{"id":"turn_neck","label":"首が楽に回る"},{"id":"work","label":"仕事に集中できる"},{"id":"sleep","label":"ぐっすり眠れる"},{"id":"light","label":"肩を軽く感じられる"}]},{"id":"knee_hip","label":"膝・股関節の痛み","triggers":[{"id":"walk_long","label":"たくさん歩いたあと"},{"id":"exercise","label":"運動を始めてから"},{"id":"age","label":"年齢とともに少しずつ"},{"id":"none","label":"思い当たらない"}],"motions":[{"id":"stairs","label":"階段の上り下り"},{"id":"standup","label":"立ち上がる"},{"id":"walk","label":"歩く"},{"id":"squat","label":"しゃがむ"},{"id":"seiza","label":"正座する"}],"abilities":[{"id":"stairs","label":"階段を楽に上り下りできる"},{"id":"walk","label":"長く歩ける"},{"id":"go_out","label":"外出を楽しめる"},{"id":"squat","label":"しゃがめる"}]},{"id":"traffic","label":"交通事故のケガ","triggers":[{"id":"rear","label":"後ろから追突された"},{"id":"collision","label":"出会い頭にぶつかった"},{"id":"bike","label":"自転車やバイクで転倒した"},{"id":"none","label":"思い当たらない（その他）"}],"motions":[{"id":"turn_neck","label":"首を動かす"},{"id":"look_up","label":"上を向く"},{"id":"bend","label":"前かがみになる"},{"id":"drive","label":"運転する"},{"id":"sleep","label":"寝ているとき"}],"abilities":[{"id":"drive","label":"安心して運転できる"},{"id":"work","label":"仕事に復帰できる"},{"id":"sleep","label":"ぐっすり眠れる"},{"id":"daily","label":"普段どおりに過ごせる"}]},{"id":"sports","label":"スポーツのケガ","triggers":[{"id":"game","label":"試合や練習中"},{"id":"overuse","label":"練習のしすぎ"},{"id":"fall","label":"転んだ・ぶつかった"},{"id":"none","label":"思い当たらない"}],"motions":[{"id":"run","label":"走る"},{"id":"jump","label":"ジャンプする"},{"id":"throw","label":"投げる・打つ"},{"id":"twist","label":"体をひねる"},{"id":"walk","label":"歩く"}],"abilities":[{"id":"practice","label":"練習に復帰できる"},{"id":"game","label":"試合に出られる"},{"id":"move","label":"思い切り体を動かせる"},{"id":"care","label":"自分でケアできる"}]},{"id":"headache","label":"頭痛・自律神経の不調","triggers":[{"id":"stress","label":"仕事や生活のストレス"},{"id":"weather","label":"天気や気圧の変化"},{"id":"desk","label":"パソコンやスマホの使いすぎ"},{"id":"none","label":"思い当たらない"}],"motions":[{"id":"morning","label":"朝起きたとき"},{"id":"desk","label":"デスクワークを続ける"},{"id":"weather","label":"天気が悪い日"},{"id":"evening","label":"夕方になると"},{"id":"sleep","label":"寝つくとき"}],"abilities":[{"id":"sleep","label":"ぐっすり眠れる"},{"id":"work","label":"仕事に集中できる"},{"id":"light","label":"体を軽く感じられる"},{"id":"less_medicine","label":"頭痛を気にせず過ごせる"}]},{"id":"postpartum","label":"産後の骨盤・姿勢","triggers":[{"id":"after_birth","label":"出産のあとから"},{"id":"childcare","label":"抱っこや授乳の姿勢"},{"id":"shape","label":"体型や姿勢の変化が気になって"},{"id":"none","label":"思い当たらない"}],"motions":[{"id":"hold","label":"抱っこする"},{"id":"feed","label":"授乳する"},{"id":"standup","label":"立ち上がる"},{"id":"walk","label":"歩く"},{"id":"sleep","label":"寝ているとき"}],"abilities":[{"id":"childcare","label":"育児を楽にこなせる"},{"id":"posture","label":"いい姿勢を保てる"},{"id":"go_out","label":"子どもとのお出かけを楽しめる"},{"id":"sleep","label":"ぐっすり眠れる"}]}],"since":[{"id":"days","label":"数日前から"},{"id":"weeks","label":"1〜2週間前から"},{"id":"month","label":"1か月以上前から"},{"id":"years","label":"何年も前から"}],"feelings":[{"id":"anxious","label":"不安だった"},{"id":"work","label":"仕事や家事に支障があった"},{"id":"hobby","label":"趣味やスポーツができなかった"},{"id":"sleep","label":"眠れなかった"},{"id":"not_improved","label":"なかなか良くならなかった"}],"impressions":[{"id":"explain","label":"説明がわかりやすい"},{"id":"listen","label":"話をよく聞いてくれる"},{"id":"kind","label":"スタッフが親切"},{"id":"clean","label":"院内がきれい"},{"id":"booking","label":"予約が取りやすい"},{"id":"access","label":"通いやすい場所"},{"id":"homecare","label":"自分でできるケアを教えてくれる"}],"results":[{"id":"much_better","label":"かなり楽になった"},{"id":"better","label":"少し楽になった"},{"id":"starting","label":"まだ通院中で、変化を感じ始めた"}]};
+  var REVIEW_URL = 'https://g.page/r/CV2o8ppz1xaREBE/review';
+  var CLINIC = 'しょうわ整骨院';
+  var TOTAL = 8;
+
+  var answers = { symptom:'', since:'', trigger:'', motions:[], feelings:[], impressions:[], result:'', abilities:[], comment:'' };
+  // 0 = 最初の2択、SELF = 自分で書く、1〜8 = 質問、9 = できあがり
+  var SELF = -1;
+  var step = 0;
+  var reviewText = '';
+  var busy = false;
+
+  function symptom() {
+    for (var i = 0; i < OPTIONS.symptoms.length; i++) if (OPTIONS.symptoms[i].id === answers.symptom) return OPTIONS.symptoms[i];
+    return null;
+  }
+
+  var STEPS = {
+    1: { title:'どこがつらかったですか？', hint:'いちばん近いものを1つ選んでください', type:'single', key:'symptom', list:function(){ return OPTIONS.symptoms; } },
+    2: { title:'いつ頃からつらかったですか？', type:'single', key:'since', list:function(){ return OPTIONS.since; } },
+    3: { title:'きっかけは何でしたか？', type:'single', key:'trigger', list:function(){ return symptom().triggers; } },
+    4: { title:'どんなときにつらかったですか？', hint:'当てはまるものをすべて選んでください', type:'multi', key:'motions', list:function(){ return symptom().motions; } },
+    5: { title:'来院前はどんな気持ちでしたか？', hint:'当てはまるものをすべて選んでください', type:'multi', key:'feelings', list:function(){ return OPTIONS.feelings; } },
+    6: { title:'当院の印象を教えてください', hint:'当てはまるものをすべて選んでください', type:'multi', key:'impressions', list:function(){ return OPTIONS.impressions; } },
+    7: { title:'今はどうなりましたか？', type:'result' },
+    8: { title:'ひとことあればどうぞ（なくても大丈夫です）', type:'comment' }
+  };
+
+  function el(tag, attrs, children) {
+    var e = document.createElement(tag);
+    for (var k in attrs || {}) {
+      if (k === 'text') e.textContent = attrs[k];
+      else if (k === 'onclick') e.onclick = attrs[k];
+      else e.setAttribute(k, attrs[k]);
+    }
+    (children || []).forEach(function (c) { if (c) e.appendChild(c); });
+    return e;
+  }
+
+  function header() {
+    var h = el('header', {}, [el('div', { class:'clinic', text: CLINIC + ' 口コミかんたん作成' })]);
+    if (step >= 1) {
+      h.appendChild(el('div', { class:'bar' }, [el('div', { style:'width:' + Math.round(Math.min(step, TOTAL) / TOTAL * 100) + '%' })]));
+      h.appendChild(el('div', { class:'count', text: step <= TOTAL ? step + ' / ' + TOTAL : 'できあがり' }));
+    }
+    if (step !== 0) h.insertBefore(el('button', { class:'back', text:'← 戻る', onclick: function () { if (!busy) { step = step === SELF ? 0 : step - 1; render(); } } }), h.firstChild);
+    return h;
+  }
+
+  function optionButtons(list, isOn, onTap) {
+    return el('div', { class:'opts' }, list.map(function (o) {
+      return el('button', { class:'opt' + (isOn(o.id) ? ' on' : ''), text:o.label, onclick:function () { onTap(o.id); } });
+    }));
+  }
+
+  function toggle(arr, id) {
+    var i = arr.indexOf(id);
+    if (i === -1) arr.push(id); else arr.splice(i, 1);
+  }
+
+  var shownStep = 0;
+
+  function render() {
+    // 次の画面に変わったときだけ一番上へ（同じ画面で選び直すときはそのまま）
+    if (step !== shownStep) { window.scrollTo(0, 0); shownStep = step; }
+    var app = document.getElementById('app');
+    app.innerHTML = '';
+    app.appendChild(header());
+    if (step === 0) return renderStart(app);
+    if (step === SELF) return renderSelf(app);
+    if (step > TOTAL) return renderResult(app);
+    var s = STEPS[step];
+    app.appendChild(el('h1', { text: s.title }));
+    if (s.hint) app.appendChild(el('p', { class:'hint', text:s.hint }));
+
+    if (s.type === 'single') {
+      app.appendChild(optionButtons(s.list(), function (id) { return answers[s.key] === id; }, function (id) {
+        if (s.key === 'symptom' && answers.symptom !== id) { answers.trigger = ''; answers.motions = []; answers.abilities = []; }
+        answers[s.key] = id; step++; render();
+      }));
+    } else if (s.type === 'multi') {
+      app.appendChild(optionButtons(s.list(), function (id) { return answers[s.key].indexOf(id) !== -1; }, function (id) { toggle(answers[s.key], id); render(); }));
+      var next = el('button', { class:'primary', text:'次へ', onclick:function () { step++; render(); } });
+      if (!answers[s.key].length) next.disabled = true;
+      app.appendChild(next);
+    } else if (s.type === 'result') {
+      app.appendChild(optionButtons(OPTIONS.results, function (id) { return answers.result === id; }, function (id) { answers.result = id; render(); }));
+      if (answers.result) {
+        app.appendChild(el('h1', { class:'sub-q', text:'できるようになったことはありますか？' }));
+        app.appendChild(el('p', { class:'hint', text:'当てはまるものがあれば選んでください（なくても大丈夫です）' }));
+        app.appendChild(optionButtons(symptom().abilities, function (id) { return answers.abilities.indexOf(id) !== -1; }, function (id) { toggle(answers.abilities, id); render(); }));
+        app.appendChild(el('button', { class:'primary', text:'次へ', onclick:function () { step++; render(); } }));
+      }
+    } else if (s.type === 'comment') {
+      var ta = el('textarea', { rows:'4', maxlength:'200', placeholder:'例：先生の説明がわかりやすくて安心できました' });
+      ta.value = answers.comment;
+      var remain = el('div', { class:'remain', text:'あと' + (200 - ta.value.length) + '文字' });
+      ta.oninput = function () { answers.comment = ta.value; remain.textContent = 'あと' + (200 - ta.value.length) + '文字'; };
+      app.appendChild(ta);
+      app.appendChild(remain);
+      app.appendChild(makeButton(app));
+    }
+  }
+
+  function makeButton(app) {
+    var b = el('button', { class:'primary', text: busy ? '文章を作っています…' : '口コミ文を作る' });
+    if (busy) b.disabled = true;
+    b.onclick = function () { generate(app); };
+    return b;
+  }
+
+  function generate(app) {
+    if (busy) return;
+    busy = true;
+    render();
+    google.script.run
+      .withSuccessHandler(function (r) {
+        busy = false;
+        if (!r || !r.text) return showError();
+        reviewText = r.text;
+        step = TOTAL + 1;
+        render();
+      })
+      .withFailureHandler(function () { busy = false; showError(); })
+      .generateReview(answers);
+  }
+
+  function showError() {
+    render();
+    document.getElementById('app').appendChild(el('p', { class:'msg', text:'うまく作れませんでした。もう一度お試しください。' }));
+  }
+
+  // コピーできたかどうかを Promise<boolean> で返す
+  function copyText(ta) {
+    ta.focus();
+    ta.select();
+    ta.setSelectionRange(0, ta.value.length);
+    var ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    if (ok) return Promise.resolve(true);
+    if (!navigator.clipboard) return Promise.resolve(false);
+    return navigator.clipboard.writeText(ta.value).then(function () { return true; }, function () { return false; });
+  }
+
+  // 実名を出したくない人向けの、折りたたみの案内
+  function anonHelp(buttonLabel) {
+    return el('details', { class:'anon' }, [
+      el('summary', { text:'実名を出したくない方へ' }),
+      el('p', { text:'口コミにはGoogleアカウントの名前が表示されます。ニックネームのアカウントを作れば、実名を出さずに投稿できます（3〜5分かかります）。' }),
+      el('p', { text:'作ったら、この画面に戻って「' + buttonLabel + '」を押してください。' }),
+      el('a', { class:'secondary', href:'https://accounts.google.com/signup', target:'_blank', rel:'noopener', style:'display:block;text-align:center;line-height:44px;text-decoration:none;', text:'ニックネームのGoogleアカウントを作る' })
+    ]);
+  }
+
+  function renderStart(app) {
+    app.appendChild(el('h1', { text:'Googleの口コミを書いていただけますか？' }));
+    app.appendChild(el('p', { class:'hint', text:'書き方を選んでください。どちらを選んでもかまいません。' }));
+    app.appendChild(el('div', { class:'opts' }, [
+      el('button', { class:'opt', text:'自分で書く', onclick:function () { step = SELF; render(); } }),
+      el('button', { class:'opt', text:'AIに下書きを手伝ってもらう（質問に答えるだけ）', onclick:function () { step = 1; render(); } })
+    ]));
+  }
+
+  function renderSelf(app) {
+    app.appendChild(el('h1', { text:'ご自身の言葉で書いてください' }));
+    app.appendChild(el('p', { class:'hint', text:'たとえば、こんなことを書くと読む人の参考になります。' }));
+    app.appendChild(el('ul', { class:'tips' }, [
+      'どこが、いつ頃からつらかったか',
+      '仕事・家事・睡眠などで困っていたこと',
+      '通ってみて感じたこと（説明・対応・通いやすさなど）',
+      '今どんな変化を感じているか'
+    ].map(function (t) { return el('li', { text:t }); })));
+    app.appendChild(el('a', { class:'primary', href: REVIEW_URL, target:'_blank', rel:'noopener', text:'Googleを開いて書く' }));
+    app.appendChild(anonHelp('Googleを開いて書く'));
+    app.appendChild(el('div', { class:'note', text:'Googleの画面で、星をつけて文章を書き「投稿」を押してください。Googleへのログインが必要な場合があります。' }));
+  }
+
+  function renderResult(app) {
+    app.appendChild(el('h1', { text:'口コミ文ができました' }));
+    app.appendChild(el('p', { class:'draft', text:'これは下書きです。実際と違うところや、言い方が気になるところは、ご自身の言葉に直してから投稿してください。' }));
+    var ta = el('textarea', { rows:'9' });
+    ta.value = reviewText;
+    ta.oninput = function () { reviewText = ta.value; };
+    app.appendChild(ta);
+    app.appendChild(el('p', { class:'hint', text:'うまくコピーできないときは、文を長押ししてコピーしてください。' }));
+    var status = el('p', { class:'ok' });
+    var copy = el('button', { class:'primary', text:'① 文をコピーする' });
+    copy.onclick = function () {
+      copyText(ta).then(function (ok) {
+        if (ok) { status.className = 'ok'; status.textContent = 'コピーしました。次に②を押してください。'; }
+        else { status.className = 'msg'; status.textContent = '自動でコピーできませんでした。上の文を長押ししてコピーしてから、②を押してください。'; }
+      });
+    };
+    app.appendChild(copy);
+    app.appendChild(status);
+    app.appendChild(el('a', { class:'primary', href: REVIEW_URL, target:'_blank', rel:'noopener', text:'② Googleを開いて投稿する' }));
+    app.appendChild(anonHelp('② Googleを開いて投稿する'));
+    app.appendChild(el('div', { class:'note', text:'Googleの画面で、文章を貼り付けて、星をつけて「投稿」を押してください。Googleへのログインが必要な場合があります。' }));
+    var again = el('button', { class:'secondary', text: busy ? '文章を作っています…' : '別の文にする' });
+    if (busy) again.disabled = true;
+    // 失敗しても今の文（直した分も含む）を残すため、結果画面のまま作り直す
+    again.onclick = function () { generate(app); };
+    app.appendChild(again);
+  }
+
+  render();
+</script>
+</body>
+</html>
